@@ -1,0 +1,45 @@
+{% extends 'base.html' %}{% block body %}
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+  <div class="btn-group">
+    <a class="btn btn-outline-primary {% if range == 'today' %}active{% endif %}" href="?range=today">Today</a>
+    <a class="btn btn-outline-primary {% if range == 'week' %}active{% endif %}" href="?range=week">This Week</a>
+    <a class="btn btn-outline-primary {% if range == 'month' %}active{% endif %}" href="?range=month">This Month</a>
+    <a class="btn btn-outline-primary {% if range == 'all' %}active{% endif %}" href="?range=all">All</a>
+  </div>
+  <div>
+    <a class="btn btn-outline-success btn-sm" href="{% url 'csv' %}?range={{ range }}">⬇ CSV</a>
+    <a class="btn btn-outline-danger btn-sm" href="{% url 'pdf' %}?range={{ range }}">⬇ PDF</a>
+  </div>
+</div>
+
+<div class="alert alert-primary"><b>Total spent:</b> ₹{{ total }}</div>
+
+<div class="row mb-4">
+  <div class="col-md-6"><div class="card p-3"><h6>Category-wise spending</h6><canvas id="catChart"></canvas></div></div>
+  <div class="col-md-6"><div class="card p-3"><h6>Expenses over time</h6><canvas id="dateChart"></canvas></div></div>
+</div>
+
+<table class="table table-bordered bg-white">
+<tr><th>Date</th><th>Description</th><th>Category</th><th>Amount (₹)</th><th>Notes</th><th>Actions</th></tr>
+{% for e in expenses %}
+<tr><td>{{ e.date }}</td><td>{{ e.description }}</td>
+<td><span class="badge bg-secondary">{{ e.category }}</span></td><td>{{ e.amount }}</td><td>{{ e.notes }}</td>
+<td><a class="btn btn-sm btn-outline-primary" href="{% url 'edit' e.pk %}">Edit</a>
+<a class="btn btn-sm btn-outline-danger" href="{% url 'delete' e.pk %}">Delete</a></td></tr>
+{% empty %}<tr><td colspan="6" class="text-center">No expenses found</td></tr>
+{% endfor %}</table>
+
+{{ chart|json_script:"chart-data" }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>
+const d = JSON.parse(document.getElementById('chart-data').textContent);
+new Chart(document.getElementById('catChart'), {
+  type: 'pie',
+  data: { labels: d.cat_labels, datasets: [{ data: d.cat_values }] }
+});
+new Chart(document.getElementById('dateChart'), {
+  type: 'bar',
+  data: { labels: d.date_labels, datasets: [{ label: 'Total (₹)', data: d.date_values, backgroundColor: '#0d6efd' }] }
+});
+</script>
+{% endblock %}

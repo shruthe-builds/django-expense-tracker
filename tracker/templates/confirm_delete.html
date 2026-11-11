@@ -1,0 +1,6 @@
+{% extends 'base.html' %}{% block body %}
+<div class="card p-4 col-md-5 mx-auto text-center"><h4>Delete this expense?</h4>
+<p>{{ expense.description }} — ₹{{ expense.amount }} ({{ expense.date }})</p>
+<form method="post">{% csrf_token %}
+  <button class="btn btn-danger">Yes, delete</button>
+  <a class="btn btn-secondary" href="/">Cancel</a></form></div>{% endblock %}

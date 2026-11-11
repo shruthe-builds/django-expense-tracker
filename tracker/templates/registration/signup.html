@@ -1,0 +1,7 @@
+{% extends 'base.html' %}{% block body %}
+<div class="card p-4 col-md-5 mx-auto"><h4>Sign Up</h4>
+<form method="post">{% csrf_token %}
+  {% for f in form %}<div class="mb-3"><label class="form-label">{{ f.label }}</label>{{ f }}
+    {% for err in f.errors %}<div class="text-danger">{{ err }}</div>{% endfor %}</div>{% endfor %}
+  <button class="btn btn-success">Create account</button>
+</form></div>{% endblock %}

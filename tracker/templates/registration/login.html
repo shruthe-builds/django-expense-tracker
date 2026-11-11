@@ -1,0 +1,8 @@
+{% extends 'base.html' %}{% block body %}
+<div class="card p-4 col-md-4 mx-auto"><h4>Login</h4>
+<form method="post">{% csrf_token %}
+  {% for f in form %}<div class="mb-3"><label class="form-label">{{ f.label }}</label>{{ f }}</div>{% endfor %}
+  {% if form.errors %}<div class="text-danger mb-2">Invalid username or password.</div>{% endif %}
+  <button class="btn btn-primary">Login</button>
+  <a href="{% url 'signup' %}" class="ms-2">Create account</a>
+</form></div>{% endblock %}
